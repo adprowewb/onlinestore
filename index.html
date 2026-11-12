@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>গ্রাম্য উপহার</title>
-<meta name="description" content="খাঁটি দেশি পণ্যের অনলাইন শপ: গুড়, লাল চিনি, সরিষার তেল, ঘি ও শীতলপাটি। সারা দেশে ডেলিভারি।">
+<meta name="description" content="খাঁটি দেশি পণ্যের অনলাইন শপ: গুড়, লাল চিনি, সরিষার তেল, ঘি ও চাল। সারা দেশে ডেলিভারি।">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: full-width bands (topbar, header, nav, hero, banners, footer) each holding a 1200px inner column; hash-routed pages swap inside <main>. */
@@ -336,14 +336,13 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 const $ = s => document.querySelector(s);
 
 /* ---------- data ---------- */
-const CATS = [{k:'gur',n:'গুড়'},{k:'mat',n:'শীতলপাটি/তৈজসপত্র'},{k:'sugar',n:'লাল চিনি'},{k:'oil',n:'সরিষার তেল'},{k:'ghee',n:'ঘি'},{k:'chal',n:'চাল'}];
+const CATS = [{k:'gur',n:'গুড়'},{k:'sugar',n:'লাল চিনি'},{k:'oil',n:'সরিষার তেল'},{k:'ghee',n:'ঘি'},{k:'chal',n:'চাল'}];
 const P = [
  {id:1,cat:'gur',tag:'খাঁটি গুড়',name:'খেজুরের গুড় (পাটালি)',price:660,unit:'কেজি',art:'patali',desc:'আমাদের খেজুরের গুড় সম্পূর্ণ প্রাকৃতিক, কোনো কেমিক্যাল বা ভেজাল নেই। দেশি পদ্ধতিতে তৈরি, শুদ্ধ ও সুস্বাদু।',rev:12},
  {id:2,cat:'sugar',tag:'লাল চিনি',name:'লাল চিনি',price:120,unit:'কেজি',art:'sugar',desc:'আখের রস থেকে দেশি পদ্ধতিতে তৈরি দানাদার লাল চিনি। চা, পায়েস ও পিঠায় আসল গ্রামীণ স্বাদ।',rev:8},
  {id:3,cat:'gur',tag:'ঝোলা গুড়',name:'ঝোলা গুড়',price:160,unit:'লিটার',art:'jhola',desc:'খেজুর রসের ঘন ঝোলা গুড়। রুটি, পিঠা ও পায়েসের সঙ্গে খেতে অতুলনীয়, কোনো রং বা চিনি মেশানো নেই।',rev:15},
  {id:4,cat:'oil',tag:'সরিষার তেল',name:'সরিষার তেল',price:220,unit:'লিটার',art:'oil',desc:'বাছাই করা দেশি সরিষা থেকে ঘানিতে ভাঙানো তেল। ঝাঁঝালো ঘ্রাণ, রান্না ও ভর্তায় আসল স্বাদ।',rev:21},
  {id:5,cat:'ghee',tag:'ঘি',name:'ঘি',price:700,unit:'কেজি',art:'ghee',desc:'খাঁটি গরুর দুধের মাখন থেকে ধীরে জ্বালে তৈরি ঘি। দানাদার, সুগন্ধি এবং সম্পূর্ণ ভেজালমুক্ত।',rev:18},
- {id:6,cat:'mat',tag:'শীতলপাটি',name:'হাতে বোনা শীতলপাটি',price:850,unit:'পিস',art:'mat',desc:'মুর্তা বেত দিয়ে কারিগরের হাতে বোনা শীতলপাটি। গরমে শীতল, টেকসই এবং ঐতিহ্যবাহী নকশার।',rev:6}
  ,{id:7,cat:'chal',tag:'দেশি চাল',name:'অরিজিনাল দেশি চাল',price:90,unit:'কেজি',art:'rice',bg:4,desc:'বাছাই করা দেশি ধানের আসল চাল। নতুন ঘ্রাণ, ঝরঝরে ভাত আর রোজকার খাবারে খাঁটি স্বাদ। (বিবরণ পরে বদলানো হবে)',rev:0}
 ];
 const byId = id => P.find(p => p.id === +id);
@@ -484,7 +483,7 @@ function vHome() {
   ];
   return `<section class="hero"><div class="in">
     <div><p class="eyebrow">প্রকৃতির দান, আপনার জন্য</p><h1>খাঁটি দেশি পণ্য <span>এখন আপনার ঘরে</span></h1>
-    <p>আমাদের কাছে পাবেন খাঁটি গুড়, শীতলপাটি/থালাবাসন, লাল চিনি সহ দেশি ও প্রাকৃতিক পণ্য!</p>
+    <p>আমাদের কাছে পাবেন খাঁটি গুড়, দেশি চাল, লাল চিনি সহ দেশি ও প্রাকৃতিক পণ্য!</p>
     <a class="btn pill" href="#products">এখনই অর্ডার করুন <span aria-hidden="true">→</span></a></div>
     <div class="art">${heroArt()}</div></div></section>
   <section class="feat"><div class="in">${feat.map(f => `<div>${f[0]}<span>${f[1]}</span></div>`).join('')}</div></section>
@@ -600,7 +599,7 @@ function vOrder() {
 function navHtml(cur) {
   const a = (h, t, on) => `<a href="${h}"${on ? ' class="on" aria-current="page"' : ''}>${t}</a>`;
   return a('#home','<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z"/></svg>হোম', cur === 'home') + a('#products','সব পণ্য', cur === 'products') + a('#cat-gur','গুড়', cur === 'cat-gur') +
-    a('#cat-mat','শীতলপাটি/তৈজসপত্র', cur === 'cat-mat') + a('#cat-sugar','লাল চিনি', cur === 'cat-sugar') +
+    a('#cat-sugar','লাল চিনি', cur === 'cat-sugar') +
     `<div class="dd"><button type="button" aria-haspopup="true">অন্যান্য ▾</button><div class="menu">${a('#cat-chal','চাল', cur === 'cat-chal')}${a('#cat-oil','সরিষার তেল', cur === 'cat-oil')}${a('#cat-ghee','ঘি', cur === 'cat-ghee')}</div></div>` +
     a('#about','আমাদের সম্পর্কে', cur === 'about') + a('#contact','যোগাযোগ', cur === 'contact');
 }
