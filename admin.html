@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>গ্রাম্য উপহার: অ্যাডমিন প্যানেল</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#166534;--g2:#15803d;--g3:#dcfce7;--gd:#0f4d27;--bg:#f2f6f3;--card:#fff;--tx:#18241c;--mu:#667a6d;--bd:#e1e9e3;--red:#dc2626;--amb:#d97706;--blu:#2563eb;--pur:#7c3aed;--r:14px;--sh:0 1px 3px rgba(20,60,35,.08)}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:'Hind Siliguri',system-ui,'Noto Sans Bengali','Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hide{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:16px;background:linear-gradient(160deg,var(--gd),var(--g2))}
+.lbox{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.lbox h1{margin:8px 0 2px;font-size:22px;text-align:center}.lbox p{margin:0 0 18px;text-align:center;color:var(--mu)}
+.logo{width:54px;height:54px;border-radius:16px;background:var(--g);color:#fff;display:grid;place-items:center;font-size:28px;margin:0 auto}
+/* layout */
+#app{display:flex;min-height:100vh}
+aside{width:250px;background:linear-gradient(180deg,var(--gd),var(--g));color:#d9f0e0;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:40;transition:transform .25s}
+.brand{display:flex;gap:10px;align-items:center;padding:18px 16px;color:#fff;font-weight:700;font-size:18px}
+.brand .logo{width:38px;height:38px;font-size:20px;margin:0;background:rgba(255,255,255,.16);border-radius:11px}
+nav{flex:1;overflow:auto;padding:4px 10px}
+nav a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;color:#d9f0e0;text-decoration:none;margin-bottom:2px;font-weight:500}
+nav a:hover{background:rgba(255,255,255,.09)}nav a.on{background:#fff;color:var(--g);font-weight:700}
+nav a svg{width:19px;height:19px;flex:none}
+nav .bdg{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font-size:12px;padding:0 7px;line-height:20px}
+.sfoot{padding:12px 14px;border-top:1px solid rgba(255,255,255,.14);font-size:13px}
+.sfoot button{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:9px;padding:8px 12px;width:100%;margin-top:8px}
+main{margin-left:250px;flex:1;min-width:0}
+header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;padding:12px 22px}
+header h2{margin:0;font-size:20px;flex:1}
+#menuBtn{display:none;background:var(--g3);border:0;border-radius:10px;width:40px;height:40px;color:var(--g)}
+.hbtn{background:var(--g3);color:var(--g);border:0;border-radius:10px;padding:8px 14px;font-weight:600}
+#shade{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:35}
+.wrap{padding:22px}
+/* ui */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
+.card h3 .more{margin-left:auto;font-size:13px;color:var(--g2);font-weight:600;cursor:pointer;background:none;border:0}
+.grid{display:grid;gap:16px}
+.g6{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
+.g2{grid-template-columns:2fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g2e{grid-template-columns:1fr 1fr}
+.stat{display:flex;gap:12px;align-items:center}
+.stat .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none}
+.stat .ic svg{width:22px;height:22px}
+.stat b{display:block;font-size:22px;line-height:1.2}.stat span{color:var(--mu);font-size:13px}
+.btn{background:var(--g);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{background:var(--g2)}.btn.sec{background:#fff;color:var(--g);border:1px solid var(--bd)}.btn.red{background:var(--red)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.55}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.bar .sp{flex:1}
+input,select,textarea{border:1px solid var(--bd);border-radius:10px;padding:9px 11px;background:#fff;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #86efac;border-color:var(--g2)}
+.bar input,.bar select{width:auto;min-width:130px}
+label{display:block;font-weight:600;margin:12px 0 4px;font-size:14px}
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bd);vertical-align:middle;white-space:nowrap}
+th{background:#f6faf7;font-size:13px;color:var(--mu);font-weight:600}
+tr:last-child td{border-bottom:0}
+tbody tr.clk{cursor:pointer}tbody tr.clk:hover{background:#f6faf7}
+td.wr{white-space:normal;min-width:160px}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12.5px;font-weight:600}
+.p-new{background:#dbeafe;color:#1d4ed8}.p-conf{background:#fef3c7;color:#b45309}.p-ship{background:#ede9fe;color:#6d28d9}.p-done{background:#dcfce7;color:#15803d}.p-can{background:#fee2e2;color:#b91c1c}
+.p-ok{background:#dcfce7;color:#15803d}.p-low{background:#fef3c7;color:#b45309}.p-out{background:#fee2e2;color:#b91c1c}.p-off{background:#e5e7eb;color:#4b5563}
+.thumb{width:42px;height:42px;border-radius:10px;object-fit:cover;background:var(--g3);display:grid;place-items:center;color:var(--g);font-weight:700}
+.mini{display:flex;flex-direction:column;gap:10px}
+.mi{display:flex;gap:10px;align-items:center;font-size:14px}.mi .t{flex:1;min-width:0}.mi .t b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mi .t small{color:var(--mu)}
+.empty{color:var(--mu);text-align:center;padding:22px 8px}
+.qa{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.qa button{background:var(--g3);color:var(--g);border:0;border-radius:12px;padding:14px 8px;font-weight:600}
+.sw{display:flex;gap:12px;align-items:center}.sw>*{flex:none}
+/* drawer & modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;display:none}
+.ov.on{display:block}
+.drw{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;z-index:61;transform:translateX(105%);transition:transform .25s;display:flex;flex-direction:column}
+.drw.on{transform:none}
+.drw .hd{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bd)}.drw .hd h3{margin:0;flex:1;font-size:18px}
+.drw .bd{flex:1;overflow:auto;padding:4px 18px 18px}.drw .ft{display:flex;gap:10px;padding:12px 18px;border-top:1px solid var(--bd)}.drw .ft .btn{flex:1;justify-content:center}
+.x{background:none;border:0;font-size:24px;line-height:1;color:var(--mu)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.up{border:2px dashed #b9d8c3;border-radius:12px;padding:16px;text-align:center;color:var(--mu);cursor:pointer;background:#f8fcf9}
+.up img{max-width:100%;max-height:150px;border-radius:10px;display:block;margin:0 auto 8px}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px}.chk input{width:auto}
+.det dl{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;margin:0}.det dt{color:var(--mu)}.det dd{margin:0;word-break:break-word}
+.tot td{font-weight:700}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#18241c;color:#fff;padding:11px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:100;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%)}#toast.bad{background:var(--red)}
+.err{color:var(--red);min-height:20px;margin-top:8px;font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin-top:8px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+svg text{font-family:inherit}
+.ld{position:fixed;inset:0;background:rgba(255,255,255,.6);display:none;place-items:center;z-index:90;font-weight:700;color:var(--g)}.ld.on{display:grid}
+/* print */
+#pr{position:fixed;left:0;top:0;width:794px;background:#fff;color:#000;padding:24px;z-index:-1;font-size:13px;display:none}
+#pr h1{font-size:20px;margin:0 0 4px}#pr .sub{color:#555;margin-bottom:12px}
+#pr table{min-width:0;width:100%;border:1px solid #999}#pr th,#pr td{border:1px solid #bbb;padding:5px 7px;white-space:normal;font-size:12px}#pr th{background:#e8f3ec;color:#000}
+@media print{body>*:not(#pr){display:none!important}#pr{display:block!important;position:static;width:auto;z-index:auto}}
+@media(max-width:1100px){.g2,.g3{grid-template-columns:1fr 1fr}.g2e{grid-template-columns:1fr}}
+@media(max-width:860px){aside{transform:translateX(-100%)}aside.on{transform:none}#shade.on{display:block}main{margin-left:0}#menuBtn{display:grid}.wrap{padding:14px}header{padding:10px 14px}.g2,.g3,.g2e{grid-template-columns:1fr}.g6{grid-template-columns:1fr 1fr}.stat b{font-size:19px}.row2{grid-template-columns:1fr}.hbtn span{display:none}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="lbox" id="lf">
+    <div class="logo">🌾</div>
+    <h1>গ্রাম্য উপহার</h1><p>অ্যাডমিন প্যানেলে প্রবেশ</p>
+    <label for="pw" style="margin-top:0">পাসওয়ার্ড</label>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="আপনার পাসওয়ার্ড">
+    <div class="err" id="lerr"></div>
+    <button class="btn" style="width:100%;justify-content:center;margin-top:6px" id="lbtn">প্রবেশ করুন</button>
+  </form>
+</div>
+
+<div id="app" class="hide">
+  <aside id="side">
+    <div class="brand"><div class="logo">🌾</div>গ্রাম্য উপহার</div>
+    <nav id="nav"></nav>
+    <div class="sfoot">অ্যাডমিন প্যানেল<button id="logout">লগআউট</button></div>
+  </aside>
+  <div id="shade"></div>
+  <main>
+    <header>
+      <button id="menuBtn" aria-label="মেনু"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <h2 id="ttl">ড্যাশবোর্ড</h2>
+      <button class="hbtn" id="refresh">↻ <span>রিফ্রেশ</span></button>
+    </header>
+    <div class="wrap" id="view"></div>
+  </main>
+</div>
+
+<div class="ov" id="ov"></div>
+<div class="drw" id="drw"></div>
+<div class="ld" id="ld">অপেক্ষা করুন...</div>
+<div id="toast"></div>
+<div id="pr"></div>
+
+<script>
+/* ===== সেটিংস ===== */
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxp9nivWFC4kS1MT98oy-VaK0ryiEwJdlkdczVMx_dUqL1BNLW3DwESJG9w36RmmiaC/exec';
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const BN = '০১২৩৪৫৬৭৮৯';
+const bn = v => String(v).replace(/\d/g, d => BN[d]);
+const num = n => bn(Math.round(Number(n) || 0).toLocaleString('en-US'));
+const tk = n => '৳' + num(n);
+const MON = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const pad = n => String(n).padStart(2, '0');
+const dstr = t => { if (!t) return '-'; const d = new Date(t); return bn(pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear()); };
+const tstr = t => { if (!t) return '-'; const d = new Date(t); return dstr(t) + ' ' + bn(pad(d.getHours()) + ':' + pad(d.getMinutes())); };
+const dkey = t => { const d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const safeStore = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} } };
+
+let PW = '', D = {orders: [], products: [], cats: [], coupons: [], statuses: []};
+
+/* ===== সার্ভার যোগাযোগ ===== */
+async function api(action, data) {
+  const body = JSON.stringify({type: 'admin', action, password: PW, data: data || {}});
+  let r;
+  if (window.google && google.script && google.script.run) {
+    r = await new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(new Error(e.message || e))).adminCall(body));
+  } else {
+    let resp;
+    try { resp = await fetch(ENDPOINT, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body}); }
+    catch (e) { throw new Error('ইন্টারনেট সংযোগ দেখুন, সার্ভারে যাওয়া যায়নি'); }
+    try { r = await resp.json(); } catch (e) { throw new Error('সার্ভারের উত্তর পড়া যায়নি। Apps Script-এ নতুন Code.gs দিয়ে New version ডেপ্লয় করেছেন তো?'); }
+  }
+  if (!r || !r.ok) throw new Error((r && r.error) || 'কিছু একটা ভুল হয়েছে');
+  return r;
+}
+function toast(m, bad) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 2800); }
+async function act(action, data, okMsg) {
+  $('#ld').classList.add('on');
+  try { D = await api(action, data); if (okMsg) toast(okMsg); return true; }
+  catch (e) { toast(e.message, true); return false; }
+  finally { $('#ld').classList.remove('on'); }
+}
+
+/* ===== লগইন ===== */
+$('#lf').addEventListener('submit', async e => {
+  e.preventDefault(); PW = $('#pw').value; $('#lerr').textContent = ''; $('#lbtn').disabled = true; $('#lbtn').textContent = 'যাচাই হচ্ছে...';
+  try { D = await api('login'); safeStore.set('pw', PW); start(); }
+  catch (x) { $('#lerr').textContent = x.message; }
+  $('#lbtn').disabled = false; $('#lbtn').textContent = 'প্রবেশ করুন';
+});
+$('#logout').onclick = () => { safeStore.set('pw', null); PW = ''; location.reload(); };
+(async () => {
+  const p = safeStore.get('pw'); if (!p) return;
+  PW = p; try { D = await api('login'); start(); } catch (e) { PW = ''; safeStore.set('pw', null); }
+})();
+function start() { $('#login').classList.add('hide'); $('#app').classList.remove('hide'); route(); }
+
+/* ===== আইকন ও মেনু ===== */
+const IC = {
+  dash: '<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+  box: '<path d="M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8"/>',
+  tag: '<path d="M20 12l-8 8-9-9V3h8zM7.5 7.5h.01"/>',
+  cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.7 12.4a1 1 0 001 .8h9.3a1 1 0 001-.8L21 7H6"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14.3c2.2.7 3.5 2.6 3.5 5.7"/>',
+  alert: '<path d="M12 3l10 18H2zM12 10v5M12 18h.01"/>',
+  coupon: '<path d="M3 9a2 2 0 002-2V5h14v2a2 2 0 002 2v6a2 2 0 00-2 2v2H5v-2a2 2 0 00-2-2zM14 6v12" stroke-dasharray="2 2"/>',
+  chart: '<path d="M3 3v18h18M7 15l4-5 3 3 5-7"/>',
+  money: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>'
+};
+const ico = (k, c) => `<svg viewBox="0 0 24 24" fill="none" stroke="${c || 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+const MENU = [['dashboard','ড্যাশবোর্ড','dash'],['products','পণ্য ব্যবস্থাপনা','box'],['categories','ক্যাটাগরি','tag'],['orders','অর্ডার ব্যবস্থাপনা','cart'],['customers','গ্রাহক ব্যবস্থাপনা','users'],['inventory','ইনভেন্টরি সতর্কতা','alert'],['coupons','কুপন ব্যবস্থাপনা','coupon'],['analytics','বিক্রয় বিশ্লেষণ','chart']];
+
+/* ===== হিসাব ===== */
+const live = o => o.status !== 'বাতিল';
+const catName = id => (D.cats.find(c => c.id === id) || {}).name || '-';
+function stockState(p) { return p.stock <= 0 ? ['out', 'স্টক শেষ'] : p.stock <= p.low ? ['low', 'কম স্টক'] : ['ok', 'পর্যাপ্ত']; }
+const stCls = s => ({'নতুন':'new','কনফার্ম':'conf','পাঠানো হয়েছে':'ship','ডেলিভারি সম্পন্ন':'done','বাতিল':'can'}[s] || 'new');
+const pill = s => `<span class="pill p-${stCls(s)}">${esc(s)}</span>`;
+function customers() {
+  const m = {};
+  D.orders.slice().sort((a, b) => a.at - b.at).forEach(o => {
+    const c = m[o.phone] || (m[o.phone] = {phone: o.phone, name: o.name, address: o.address, first: o.at, last: o.at, n: 0, spent: 0});
+    c.name = o.name; c.address = o.address; c.last = o.at; c.n++; if (live(o)) c.spent += o.total;
+  });
+  return Object.values(m).sort((a, b) => b.last - a.last);
+}
+function lines(o) {
+  if (o.items && o.items.length) return o.items.map(i => ({name: i.name, size: i.size, qty: i.qty, line: i.line, id: i.id}));
+  return String(o.text || '').split('\n').map(l => { const m = l.match(/^'?(.*) \((.*)\) x (\d+) = (\d+)/); return m ? {name: m[1], size: m[2], qty: +m[3], line: +m[4]} : null; }).filter(Boolean);
+}
+const lowList = () => D.products.filter(p => p.active && p.stock <= p.low).sort((a, b) => a.stock - b.stock);
+function inRange(days) { if (!days) return D.orders; const from = Date.now() - days * 864e5; return D.orders.filter(o => o.at >= from); }
+
+/* ===== চার্ট (SVG) ===== */
+const COL = ['#15803d', '#2563eb', '#d97706', '#7c3aed', '#dc2626', '#0891b2'];
+function lineChart(pts, h) { // pts: [{l, v}]
+  h = h || 220; const W = 640, pl = 46, pb = 26, pt = 10, pr = 10;
+  const max = Math.max(1, ...pts.map(p => p.v)), step = Math.pow(10, Math.floor(Math.log10(max))), top = Math.ceil(max / step) * step;
+  const x = i => pl + (pts.length < 2 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (pts.length - 1)), y = v => pt + (h - pt - pb) * (1 - v / top);
+  let g = '';
+  for (let i = 0; i <= 4; i++) { const v = top * i / 4; g += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#e1e9e3"/><text x="${pl - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="#667a6d">${num(v)}</text>`; }
+  const every = Math.ceil(pts.length / 7);
+  pts.forEach((p, i) => { if (i % every === 0 || i === pts.length - 1) g += `<text x="${x(i)}" y="${h - 7}" text-anchor="middle" font-size="11" fill="#667a6d">${esc(p.l)}</text>`; });
+  const path = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.v).toFixed(1)).join('');
+  const area = path + `L${x(pts.length - 1)} ${y(0)}L${x(0)} ${y(0)}Z`;
+  return `<svg viewBox="0 0 ${W} ${h}" width="100%" role="img" aria-label="বিক্রির ধারা">${g}<path d="${area}" fill="#15803d" opacity=".12"/><path d="${path}" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linejoin="round"/>${pts.map((p, i) => `<circle cx="${x(i)}" cy="${y(p.v)}" r="3.2" fill="#15803d"><title>${esc(p.l)}: ${tk(p.v)}</title></circle>`).join('')}</svg>`;
+}
+function donut(parts) { // [{l,v,c}]
+  const tot = parts.reduce((a, p) => a + p.v, 0), R = 52, C = 2 * Math.PI * R; let off = 0;
+  const segs = tot ? parts.filter(p => p.v).map(p => { const len = p.v / tot * C, s = `<circle r="${R}" cx="70" cy="70" fill="none" stroke="${p.c}" stroke-width="22" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"><title>${esc(p.l)}: ${bn(p.v)}</title></circle>`; off += len; return s; }).join('') : `<circle r="${R}" cx="70" cy="70" fill="none" stroke="#e1e9e3" stroke-width="22"/>`;
+  return `<div class="sw"><svg viewBox="0 0 140 140" width="140" height="140" role="img" aria-label="ডোনাট চার্ট">${segs}<text x="70" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="#18241c">${bn(tot)}</text><text x="70" y="86" text-anchor="middle" font-size="11" fill="#667a6d">মোট</text></svg><div class="legend" style="flex-direction:column;margin:0">${parts.map(p => `<div><i style="background:${p.c}"></i>${esc(p.l)}: <b>${bn(p.v)}</b></div>`).join('')}</div></div>`;
+}
+function hbars(items, fmt) { // [{l,v}]
+  const max = Math.max(1, ...items.map(i => i.v));
+  return items.length ? `<div class="mini">${items.map((it, k) => `<div><div class="mi" style="justify-content:space-between"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.l)}</span><b>${fmt(it.v)}</b></div><div style="height:8px;background:#eef3ef;border-radius:9px"><div style="height:8px;border-radius:9px;width:${(it.v / max * 100).toFixed(1)}%;background:${COL[k % COL.length]}"></div></div></div>`).join('')}</div>` : '<div class="empty">এখনও তথ্য নেই</div>';
+}
+function trend(days) {
+  const map = {}, out = [];
+  D.orders.filter(live).forEach(o => { const k = dkey(o.at); map[k] = (map[k] || 0) + o.total; });
+  for (let i = days - 1; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); out.push({l: bn(d.getDate() + ' ' + MON[d.getMonth()].slice(0, 3)), v: map[dkey(d)] || 0}); }
+  return out;
+}
+function statusParts() { return D.statuses.map((s, i) => ({l: s, v: D.orders.filter(o => o.status === s).length, c: ['#2563eb', '#d97706', '#7c3aed', '#15803d', '#dc2626'][i]})); }
+function topProducts(list) {
+  const m = {}; list.filter(live).forEach(o => lines(o).forEach(l => { const k = l.name; const x = m[k] || (m[k] = {l: k, qty: 0, v: 0}); x.qty += l.qty; x.v += l.line; }));
+  return Object.values(m).sort((a, b) => b.v - a.v);
+}
+
+/* ===== এক্সপোর্ট ===== */
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('লাইব্রেরি লোড হয়নি, ইন্টারনেট দেখুন')); document.head.appendChild(s); }); }
+const fname = (t, ext) => 'grammo-upohar-' + t.replace(/\s+/g, '-') + '-' + dkey(Date.now()) + '.' + ext;
+function plain(h) { return h.map(x => String(x).replace(/<[^>]*>/g, '')); }
+async function doExport(kind, title, head, rows) {
+  rows = rows.map(r => r.map(c => String(c == null ? '' : c).replace(/<[^>]*>/g, '')));
+  try {
+    if (kind === 'csv') {
+      const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+      const t = '﻿' + [head, ...rows].map(r => r.map(q).join(',')).join('\r\n');
+      dl(new Blob([t], {type: 'text/csv;charset=utf-8'}), fname(title, 'csv'));
+    } else if (kind === 'xlsx') {
+      if (!window.XLSX) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+      const ws = XLSX.utils.aoa_to_sheet([head, ...rows]); ws['!cols'] = head.map((h, i) => ({wch: Math.min(40, Math.max(String(h).length, ...rows.map(r => String(r[i]).length)) + 2)}));
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Report'); XLSX.writeFile(wb, fname(title, 'xlsx'));
+    } else {
+      const pr = $('#pr');
+      pr.innerHTML = `<h1>গ্রাম্য উপহার: ${esc(title)}</h1><div class="sub">তৈরির সময়: ${tstr(Date.now())}</div><table><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      if (kind === 'print') { printNow(); return; }
+      pr.style.display = 'block';
+      if (!window.html2pdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+      await html2pdf().set({margin: 8, filename: fname(title, 'pdf'), image: {type: 'jpeg', quality: .95}, html2canvas: {scale: 2, backgroundColor: '#fff'}, jsPDF: {unit: 'mm', format: 'a4', orientation: head.length > 6 ? 'landscape' : 'portrait'}}).from(pr).save();
+      pr.style.display = '';
+    }
+    toast('ফাইল তৈরি হয়েছে');
+  } catch (e) { $('#pr').style.display = ''; toast(e.message, true); }
+}
+function printNow() { const pr = $('#pr'); pr.style.display = 'block'; setTimeout(() => { window.print(); pr.style.display = ''; }, 150); }
+function dl(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+const exBtns = id => `<button class="btn sec sm" data-ex="xlsx" data-for="${id}">📗 Excel</button><button class="btn sec sm" data-ex="pdf" data-for="${id}">📕 PDF</button><button class="btn sec sm" data-ex="csv" data-for="${id}">CSV</button><button class="btn sec sm" data-ex="print" data-for="${id}">🖨 প্রিন্ট</button>`;
+const EXP = {}; // id -> {title, head, rows}
+document.addEventListener('click', e => { const b = e.target.closest('[data-ex]'); if (!b) return; const x = EXP[b.dataset.for]; if (x) doExport(b.dataset.ex, x.title, x.head, x.rows); });
+
+/* ===== রাউটার ===== */
+let cur = 'dashboard';
+function route() {
+  cur = (location.hash || '#dashboard').slice(1); if (!MENU.some(m => m[0] === cur)) cur = 'dashboard';
+  const low = lowList().length, nw = D.orders.filter(o => o.status === 'নতুন').length;
+  $('#nav').innerHTML = MENU.map(m => `<a href="#${m[0]}" class="${m[0] === cur ? 'on' : ''}">${ico(m[2])}${m[1]}${m[0] === 'inventory' && low ? `<span class="bdg">${bn(low)}</span>` : ''}${m[0] === 'orders' && nw ? `<span class="bdg" style="background:#2563eb">${bn(nw)}</span>` : ''}</a>`).join('');
+  $('#ttl').textContent = MENU.find(m => m[0] === cur)[1];
+  closeSide(); $('#view').innerHTML = ''; VIEWS[cur](); window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', () => { if (PW) route(); });
+$('#refresh').onclick = async () => { if (await act('bootstrap', {}, 'হালনাগাদ হয়েছে')) route(); };
+const openSide = () => { $('#side').classList.add('on'); $('#shade').classList.add('on'); }, closeSide = () => { $('#side').classList.remove('on'); $('#shade').classList.remove('on'); };
+$('#menuBtn').onclick = openSide; $('#shade').onclick = closeSide;
+
+/* ===== ড্রয়ার ===== */
+function openDrawer(title, body, foot) {
+  $('#drw').innerHTML = `<div class="hd"><h3>${title}</h3><button class="x" id="dx" aria-label="বন্ধ">×</button></div><div class="bd">${body}</div>${foot ? `<div class="ft">${foot}</div>` : ''}`;
+  $('#drw').classList.add('on'); $('#ov').classList.add('on'); $('#dx').onclick = closeDrawer;
+}
+function closeDrawer() { $('#drw').classList.remove('on'); $('#ov').classList.remove('on'); }
+$('#ov').onclick = closeDrawer;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+/* ===== ভিউ: ড্যাশবোর্ড ===== */
+const VIEWS = {};
+VIEWS.dashboard = () => {
+  const today = dkey(Date.now()), L = D.orders.filter(live);
+  const todaySales = L.filter(o => dkey(o.at) === today).reduce((a, o) => a + o.total, 0);
+  const total = L.reduce((a, o) => a + o.total, 0), cs = customers();
+  const stats = [['আজকের বিক্রি', tk(todaySales), 'money', '#15803d', '#dcfce7'], ['মোট অর্ডার', num(D.orders.length), 'cart', '#2563eb', '#dbeafe'], ['নতুন অর্ডার', num(D.orders.filter(o => o.status === 'নতুন').length), 'box', '#d97706', '#fef3c7'], ['মোট বিক্রি', tk(total), 'chart', '#7c3aed', '#ede9fe'], ['মোট গ্রাহক', num(cs.length), 'users', '#0891b2', '#cffafe'], ['কম স্টক', num(lowList().length), 'alert', '#dc2626', '#fee2e2']];
+  const recent = D.orders.slice().sort((a, b) => b.at - a.at).slice(0, 6), low = lowList().slice(0, 5);
+  const newc = cs.filter(c => c.first >= Date.now() - 30 * 864e5).slice(0, 5), act = D.coupons.filter(c => c.active).slice(0, 5);
+  const tp = topProducts(D.orders).slice(0, 5);
+  $('#view').innerHTML = `<div class="grid g6">${stats.map(s => `<div class="card stat"><div class="ic" style="background:${s[4]}">${ico(s[2], s[3])}</div><div><b>${s[1]}</b><span>${s[0]}</span></div></div>`).join('')}</div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h3>বিক্রির ধারা (৭ দিন)<button class="more" data-go="analytics">বিস্তারিত ›</button></h3>${lineChart(trend(7), 210)}</div>
+  <div class="card"><h3>অর্ডারের অবস্থা</h3>${donut(statusParts())}</div></div>
+  <div class="grid g3" style="margin-top:16px">
+  <div class="card"><h3>সেরা বিক্রিত পণ্য</h3>${hbars(tp.map(t => ({l: t.l, v: t.v})), tk)}</div>
+  <div class="card"><h3>সাম্প্রতিক অর্ডার<button class="more" data-go="orders">সব দেখুন ›</button></h3><div class="mini">${recent.map(o => `<div class="mi"><div class="t"><b>${esc(o.name)}</b><small>${bn(esc(o.no))} · ${dstr(o.at)}</small></div>${pill(o.status)}<b>${tk(o.total)}</b></div>`).join('') || '<div class="empty">কোনো অর্ডার নেই</div>'}</div></div>
+  <div class="card"><h3>কম স্টক পণ্য<button class="more" data-go="inventory">সব দেখুন ›</button></h3><div class="mini">${low.map(p => `<div class="mi"><div class="t"><b>${esc(p.name)}</b><small>সীমা: ${bn(p.low)} ${esc(p.unit)}</small></div><span class="pill p-${stockState(p)[0]}">${bn(p.stock)} ${esc(p.unit)}</span></div>`).join('') || '<div class="empty">সব পণ্যের স্টক ঠিক আছে ✓</div>'}</div></div>
+  <div class="card"><h3>নতুন গ্রাহক (৩০ দিন)<button class="more" data-go="customers">সব দেখুন ›</button></h3><div class="mini">${newc.map(c => `<div class="mi"><div class="thumb">${esc(c.name.slice(0, 1))}</div><div class="t"><b>${esc(c.name)}</b><small>${bn(esc(c.phone))}</small></div></div>`).join('') || '<div class="empty">নতুন গ্রাহক নেই</div>'}</div></div>
+  <div class="card"><h3>সক্রিয় কুপন<button class="more" data-go="coupons">সব দেখুন ›</button></h3><div class="mini">${act.map(c => `<div class="mi"><div class="t"><b>${esc(c.code)}</b><small>${c.type === 'percent' ? bn(c.value) + '%' : tk(c.value)} ছাড় · ব্যবহৃত ${bn(c.used)}</small></div></div>`).join('') || '<div class="empty">কোনো কুপন নেই</div>'}</div></div>
+  <div class="card"><h3>দ্রুত কাজ</h3><div class="qa"><button data-go="products" data-new="1">＋ নতুন পণ্য</button><button data-go="coupons" data-new="1">＋ নতুন কুপন</button><button data-go="orders">অর্ডার দেখুন</button><button data-go="analytics">রিপোর্ট</button></div></div></div>`;
+};
+document.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (!b) return; location.hash = b.dataset.go; if (b.dataset.new) setTimeout(() => (b.dataset.go === 'products' ? editProduct() : editCoupon()), 50); });
+
+/* ===== পণ্য ===== */
+let pq = '', pc = '';
+VIEWS.products = () => {
+  const rows = () => D.products.filter(p => (!pq || (p.name + p.tag).toLowerCase().includes(pq.toLowerCase())) && (!pc || p.cat === pc));
+  $('#view').innerHTML = `<div class="bar"><input id="q" placeholder="পণ্য খুঁজুন..." value="${esc(pq)}"><select id="fc"><option value="">সব ক্যাটাগরি</option>${D.cats.map(c => `<option value="${esc(c.id)}" ${c.id === pc ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select><span class="sp"></span>${exBtns('p')}<button class="btn" id="add">＋ নতুন পণ্য</button></div><div class="tw"><table><thead><tr><th>ছবি</th><th>পণ্যের নাম</th><th>ক্যাটাগরি</th><th>দাম</th><th>স্টক</th><th>অবস্থা</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>`;
+  const draw = () => {
+    const r = rows();
+    EXP.p = {title: 'পণ্য তালিকা', head: ['আইডি', 'নাম', 'ক্যাটাগরি', 'দাম (টাকা)', 'একক', 'স্টক', 'অবস্থা'], rows: r.map(p => [p.id, p.name, catName(p.cat), p.price, p.unit, p.stock, p.active ? 'চালু' : 'বন্ধ'])};
+    $('#tb').innerHTML = r.map(p => { const s = stockState(p); return `<tr><td>${p.img ? `<img class="thumb" src="${esc(p.img)}" alt="">` : `<div class="thumb">${esc(p.name.slice(0, 1))}</div>`}</td><td class="wr"><b>${esc(p.name)}</b></td><td>${esc(catName(p.cat))}</td><td>${tk(p.price)}/${esc(p.unit)}</td><td><span class="pill p-${s[0]}">${bn(p.stock)} ${esc(p.unit)}</span></td><td>${p.active ? '<span class="pill p-ok">চালু</span>' : '<span class="pill p-off">বন্ধ</span>'}</td><td><button class="btn sec sm" data-e="${p.id}">সম্পাদনা</button> <button class="btn sec sm" style="color:var(--red)" data-d="${p.id}">মুছুন</button></td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">কোনো পণ্য নেই</td></tr>';
+  };
+  draw();
+  $('#q').oninput = e => { pq = e.target.value; draw(); }; $('#fc').onchange = e => { pc = e.target.value; draw(); };
+  $('#add').onclick = () => editProduct();
+  $('#tb').onclick = async e => {
+    const eb = e.target.closest('[data-e]'), db = e.target.closest('[data-d]');
+    if (eb) editProduct(D.products.find(p => p.id == eb.dataset.e));
+    if (db) { const p = D.products.find(x => x.id == db.dataset.d); if (confirm(`"${p.name}" পণ্যটি মুছে ফেলবেন?`) && await act('deleteProduct', {id: p.id}, 'পণ্য মুছে ফেলা হয়েছে')) route(); }
+  };
+};
+let imgData = '';
+function editProduct(p) {
+  p = p || {active: true, unit: 'কেজি', stock: 0, low: 10, cat: (D.cats[0] || {}).id}; imgData = p.img || '';
+  openDrawer(p.id ? 'পণ্য সম্পাদনা' : 'নতুন পণ্য যুক্ত করুন', `
+  <label>পণ্যের নাম *</label><input id="f-n" value="${esc(p.name || '')}" maxlength="80">
+  <label>ক্যাটাগরি</label><select id="f-c">${D.cats.map(c => `<option value="${esc(c.id)}" ${c.id === p.cat ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
+  <div class="row2"><div><label>দাম (টাকা) *</label><input id="f-p" type="number" min="0" inputmode="numeric" value="${p.price ?? ''}"></div><div><label>একক</label><select id="f-u">${['কেজি', 'লিটার', 'পিস'].map(u => `<option ${u === p.unit ? 'selected' : ''}>${u}</option>`).join('')}</select></div></div>
+  <div class="row2"><div><label>বর্তমান স্টক</label><input id="f-s" type="number" min="0" inputmode="numeric" value="${p.stock ?? 0}"></div><div><label>সতর্কতা সীমা</label><input id="f-l" type="number" min="0" inputmode="numeric" value="${p.low ?? 10}"></div></div>
+  <label>ট্যাগ (যেমন: খাঁটি গুড়)</label><input id="f-t" value="${esc(p.tag || '')}" maxlength="40">
+  <label>বিবরণ</label><textarea id="f-d" rows="4" maxlength="480">${esc(p.desc || '')}</textarea>
+  <label>পণ্যের ছবি</label><div class="up" id="up">${imgData ? `<img src="${esc(imgData)}" alt="">` : ''}<div id="upt">${imgData ? 'ছবি বদলাতে ট্যাপ করুন' : '📷 ছবি আপলোড করতে ট্যাপ করুন<br><small>JPG/PNG, ছবি নিজে থেকেই ছোট হবে</small>'}</div></div><input id="f-f" type="file" accept="image/*" class="hide">
+  ${imgData ? '<button class="btn sec sm" id="rmimg" style="margin-top:8px">ছবি সরান (ডিফল্ট ছবি ব্যবহার হবে)</button>' : ''}
+  <label class="chk"><input type="checkbox" id="f-a" ${p.active !== false ? 'checked' : ''}> ওয়েবসাইটে দেখান (চালু)</label>`,
+  `<button class="btn sec" id="cx">বাতিল</button><button class="btn" id="sv">সংরক্ষণ করুন</button>`);
+  $('#up').onclick = () => $('#f-f').click(); $('#cx').onclick = closeDrawer;
+  if ($('#rmimg')) $('#rmimg').onclick = () => { imgData = ''; editProduct({...collect(), id: p.id, img: ''}); };
+  const collect = () => ({id: p.id, name: $('#f-n').value, cat: $('#f-c').value, price: $('#f-p').value, unit: $('#f-u').value, stock: $('#f-s').value, low: $('#f-l').value, tag: $('#f-t').value, desc: $('#f-d').value, active: $('#f-a').checked, img: imgData});
+  $('#f-f').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { imgData = await shrink(f); const keep = collect(); editProduct({...keep, price: keep.price === '' ? undefined : Number(keep.price), stock: Number(keep.stock), low: Number(keep.low)}); }
+    catch (x) { toast(x.message, true); }
+  };
+  $('#sv').onclick = async () => {
+    const d = collect(); if (!d.name.trim()) return toast('পণ্যের নাম দিন', true); if (d.price === '' || +d.price < 0) return toast('সঠিক দাম দিন', true);
+    if (await act('saveProduct', d, 'পণ্য সংরক্ষিত হয়েছে')) { closeDrawer(); route(); }
+  };
+}
+function shrink(file) {
+  return new Promise((res, rej) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onerror = () => rej(new Error('ছবিটি পড়া যায়নি'));
+    img.onload = () => {
+      let w = 480, q = .78, out = '';
+      for (let i = 0; i < 6; i++) {
+        const sc = Math.min(1, w / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+        const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q); if (out.length < 45000) break; w *= .8; q -= .06;
+      }
+      URL.revokeObjectURL(u); out.length < 48000 ? res(out) : rej(new Error('ছবিটি অনেক বড়, অন্য ছবি দিন'));
+    };
+    img.src = u;
+  });
+}
+
+/* ===== ক্যাটাগরি ===== */
+VIEWS.categories = () => {
+  $('#view').innerHTML = `<div class="bar"><span class="sp"></span>${exBtns('c')}<button class="btn" id="add">＋ নতুন ক্যাটাগরি</button></div><div class="tw"><table><thead><tr><th>ক্যাটাগরির নাম</th><th>পণ্য সংখ্যা</th><th></th></tr></thead><tbody>${D.cats.map(c => `<tr><td><b>${esc(c.name)}</b></td><td>${bn(D.products.filter(p => p.cat === c.id).length)}</td><td><button class="btn sec sm" data-e="${esc(c.id)}">সম্পাদনা</button> <button class="btn sec sm" style="color:var(--red)" data-d="${esc(c.id)}">মুছুন</button></td></tr>`).join('') || '<tr><td colspan="3" class="empty">কোনো ক্যাটাগরি নেই</td></tr>'}</tbody></table></div>`;
+  EXP.c = {title: 'ক্যাটাগরি তালিকা', head: ['নাম', 'পণ্য সংখ্যা'], rows: D.cats.map(c => [c.name, D.products.filter(p => p.cat === c.id).length])};
+  const form = c => {
+    openDrawer(c ? 'ক্যাটাগরি সম্পাদনা' : 'নতুন ক্যাটাগরি', `<label>ক্যাটাগরির নাম *</label><input id="f-n" value="${esc(c ? c.name : '')}" maxlength="40">`, `<button class="btn sec" id="cx">বাতিল</button><button class="btn" id="sv">সংরক্ষণ করুন</button>`);
+    $('#cx').onclick = closeDrawer; $('#f-n').focus();
+    $('#sv').onclick = async () => { if (!$('#f-n').value.trim()) return toast('নাম দিন', true); if (await act('saveCategory', {id: c && c.id, name: $('#f-n').value}, 'সংরক্ষিত হয়েছে')) { closeDrawer(); route(); } };
+  };
+  $('#add').onclick = () => form();
+  $('#view').querySelector('tbody').onclick = async e => {
+    const eb = e.target.closest('[data-e]'), db = e.target.closest('[data-d]');
+    if (eb) form(D.cats.find(c => c.id === eb.dataset.e));
+    if (db && confirm('এই ক্যাটাগরি মুছে ফেলবেন?') && await act('deleteCategory', {id: db.dataset.d}, 'মুছে ফেলা হয়েছে')) route();
+  };
+};
+
+/* ===== অর্ডার ===== */
+let oq = '', os = '';
+VIEWS.orders = () => {
+  $('#view').innerHTML = `<div class="bar"><input id="q" placeholder="নাম, মোবাইল বা অর্ডার নং" value="${esc(oq)}"><select id="fs"><option value="">সব অবস্থা</option>${D.statuses.map(s => `<option ${s === os ? 'selected' : ''}>${s}</option>`).join('')}</select><span class="sp"></span>${exBtns('o')}</div><div class="tw"><table><thead><tr><th>অর্ডার নং</th><th>তারিখ</th><th>গ্রাহক</th><th>মোবাইল</th><th>মোট</th><th>পেমেন্ট</th><th>অবস্থা</th></tr></thead><tbody id="tb"></tbody></table></div>`;
+  const draw = () => {
+    const r = D.orders.filter(o => (!os || o.status === os) && (!oq || (o.name + o.phone + o.no).toLowerCase().includes(oq.toLowerCase()))).sort((a, b) => b.at - a.at);
+    EXP.o = {title: 'অর্ডার রিপোর্ট', head: ['অর্ডার নং', 'তারিখ', 'নাম', 'মোবাইল', 'ঠিকানা', 'পণ্য', 'ছাড়', 'সর্বমোট', 'পেমেন্ট', 'যাচাই', 'অবস্থা'], rows: r.map(o => [o.no, tstr(o.at), o.name, o.phone, o.address, String(o.text).replace(/\n/g, '; '), o.discount, o.total, o.pay, o.paid ? 'হ্যাঁ' : 'না', o.status])};
+    $('#tb').innerHTML = r.map(o => `<tr class="clk" data-n="${esc(o.no)}"><td><b>${esc(o.no)}</b></td><td>${tstr(o.at)}</td><td>${esc(o.name)}</td><td>${bn(esc(o.phone))}</td><td>${tk(o.total)}</td><td>${esc(o.pay)}${o.pay.includes('অগ্রিম') ? (o.paid ? ' ✓' : ' <span style="color:var(--amb)">(যাচাই বাকি)</span>') : ''}</td><td>${pill(o.status)}</td></tr>`).join('') || '<tr><td colspan="7" class="empty">কোনো অর্ডার নেই</td></tr>';
+  };
+  draw(); $('#q').oninput = e => { oq = e.target.value; draw(); }; $('#fs').onchange = e => { os = e.target.value; draw(); };
+  $('#tb').onclick = e => { const tr = e.target.closest('tr[data-n]'); if (tr) orderDetail(D.orders.find(o => o.no === tr.dataset.n)); };
+};
+function orderDetail(o) {
+  const ls = lines(o);
+  openDrawer('অর্ডার ' + esc(o.no), `<div class="det"><dl><dt>তারিখ</dt><dd>${tstr(o.at)}</dd><dt>গ্রাহক</dt><dd>${esc(o.name)}</dd><dt>মোবাইল</dt><dd><a href="tel:${esc(o.phone)}">${bn(esc(o.phone))}</a></dd><dt>ঠিকানা</dt><dd>${esc(o.address)}</dd><dt>পেমেন্ট</dt><dd>${esc(o.pay)}</dd>${o.sender ? `<dt>প্রেরক / TrxID</dt><dd>${bn(esc(o.sender))} / ${esc(o.trx)}</dd>` : ''}${o.note ? `<dt>নোট</dt><dd style="color:var(--red)">${esc(o.note)}</dd>` : ''}</dl></div>
+  <div class="tw" style="margin-top:14px"><table style="min-width:0"><thead><tr><th>পণ্য</th><th>সংখ্যা</th><th>টাকা</th></tr></thead><tbody>${ls.map(l => `<tr><td class="wr">${esc(l.name)}<br><small>${esc(l.size)}</small></td><td>${bn(l.qty)}</td><td>${tk(l.line)}</td></tr>`).join('') || `<tr><td colspan="3" class="wr">${esc(o.text)}</td></tr>`}
+  <tr><td colspan="2">সাবটোটাল</td><td>${tk(o.subtotal)}</td></tr>${o.discount ? `<tr><td colspan="2">কুপন ${esc(o.coupon)}</td><td>-${tk(o.discount)}</td></tr>` : ''}<tr><td colspan="2">ডেলিভারি</td><td>${tk(o.delivery)}</td></tr><tr class="tot"><td colspan="2">সর্বমোট</td><td>${tk(o.total)}</td></tr></tbody></table></div>
+  <label>অর্ডারের অবস্থা</label><select id="os">${D.statuses.map(s => `<option ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}</select>
+  <label class="chk"><input type="checkbox" id="op" ${o.paid ? 'checked' : ''}> পেমেন্ট যাচাই হয়েছে</label>
+  <p style="color:var(--mu);font-size:13px">অর্ডার বাতিল করলে স্টক নিজে থেকে ফেরত আসবে।</p>`,
+  `<button class="btn sec" id="pi">🖨 ইনভয়েস</button><button class="btn" id="sv">সংরক্ষণ করুন</button>`);
+  $('#sv').onclick = async () => { if (await act('updateOrder', {no: o.no, status: $('#os').value, paid: $('#op').checked}, 'অর্ডার হালনাগাদ হয়েছে')) { closeDrawer(); route(); } };
+  $('#pi').onclick = () => { $('#pr').innerHTML = `<h1>গ্রাম্য উপহার: ইনভয়েস</h1><div class="sub">অর্ডার নং ${esc(o.no)} · ${tstr(o.at)}</div><p><b>${esc(o.name)}</b><br>মোবাইল: ${bn(esc(o.phone))}<br>ঠিকানা: ${esc(o.address)}<br>পেমেন্ট: ${esc(o.pay)}</p><table><thead><tr><th>পণ্য</th><th>পরিমাণ</th><th>টাকা</th></tr></thead><tbody>${ls.map(l => `<tr><td>${esc(l.name)} (${esc(l.size)})</td><td>${bn(l.qty)}</td><td>${tk(l.line)}</td></tr>`).join('')}<tr><td colspan="2">সাবটোটাল</td><td>${tk(o.subtotal)}</td></tr>${o.discount ? `<tr><td colspan="2">ছাড় (${esc(o.coupon)})</td><td>-${tk(o.discount)}</td></tr>` : ''}<tr><td colspan="2">ডেলিভারি</td><td>${tk(o.delivery)}</td></tr><tr><td colspan="2"><b>সর্বমোট</b></td><td><b>${tk(o.total)}</b></td></tr></tbody></table><p style="margin-top:18px">ধন্যবাদ! যোগাযোগ: ০১৭২২০৭২৪৭৪</p>`; printNow(); };
+}
+
+/* ===== গ্রাহক ===== */
+let cq = '';
+VIEWS.customers = () => {
+  $('#view').innerHTML = `<div class="bar"><input id="q" placeholder="নাম বা মোবাইল খুঁজুন" value="${esc(cq)}"><span class="sp"></span>${exBtns('u')}</div><div class="tw"><table><thead><tr><th>গ্রাহক</th><th>মোবাইল</th><th>ঠিকানা</th><th>অর্ডার</th><th>মোট কেনা</th><th>সর্বশেষ</th></tr></thead><tbody id="tb"></tbody></table></div>`;
+  const draw = () => {
+    const r = customers().filter(c => !cq || (c.name + c.phone).includes(cq));
+    EXP.u = {title: 'গ্রাহক তালিকা', head: ['নাম', 'মোবাইল', 'ঠিকানা', 'অর্ডার সংখ্যা', 'মোট কেনা (টাকা)', 'সর্বশেষ অর্ডার'], rows: r.map(c => [c.name, c.phone, c.address, c.n, c.spent, dstr(c.last)])};
+    $('#tb').innerHTML = r.map(c => `<tr><td><b>${esc(c.name)}</b>${c.n > 1 ? ' <span class="pill p-done">নিয়মিত</span>' : ''}</td><td><a href="tel:${esc(c.phone)}">${bn(esc(c.phone))}</a></td><td class="wr">${esc(c.address)}</td><td>${bn(c.n)}</td><td>${tk(c.spent)}</td><td>${dstr(c.last)}</td></tr>`).join('') || '<tr><td colspan="6" class="empty">কোনো গ্রাহক নেই</td></tr>';
+  };
+  draw(); $('#q').oninput = e => { cq = e.target.value; draw(); };
+};
+
+/* ===== ইনভেন্টরি ===== */
+VIEWS.inventory = () => {
+  const low = lowList(), out = D.products.filter(p => p.active && p.stock <= 0).length;
+  EXP.i = {title: 'ইনভেন্টরি রিপোর্ট', head: ['পণ্য', 'ক্যাটাগরি', 'স্টক', 'একক', 'সতর্কতা সীমা', 'অবস্থা'], rows: D.products.map(p => [p.name, catName(p.cat), p.stock, p.unit, p.low, stockState(p)[1]])};
+  $('#view').innerHTML = `<div class="grid g6" style="margin-bottom:16px"><div class="card stat"><div class="ic" style="background:#fef3c7">${ico('alert', '#d97706')}</div><div><b>${bn(low.length)}</b><span>সতর্কতার পণ্য</span></div></div><div class="card stat"><div class="ic" style="background:#fee2e2">${ico('box', '#dc2626')}</div><div><b>${bn(out)}</b><span>স্টক শেষ</span></div></div><div class="card stat"><div class="ic" style="background:#dcfce7">${ico('box', '#15803d')}</div><div><b>${bn(D.products.length)}</b><span>মোট পণ্য</span></div></div></div>
+  <div class="bar"><span class="sp"></span>${exBtns('i')}</div><div class="tw"><table><thead><tr><th>পণ্য</th><th>বর্তমান স্টক</th><th>সীমা</th><th>অবস্থা</th><th>স্টক বদলান</th></tr></thead><tbody>${D.products.slice().sort((a, b) => (a.stock - a.low) - (b.stock - b.low)).map(p => { const s = stockState(p); return `<tr><td><b>${esc(p.name)}</b></td><td>${bn(p.stock)} ${esc(p.unit)}</td><td>${bn(p.low)}</td><td><span class="pill p-${s[0]}">${s[1]}</span></td><td><div style="display:flex;gap:6px"><input type="number" min="0" value="${p.stock}" style="width:90px" data-s="${p.id}"><button class="btn sm" data-save="${p.id}">সেভ</button></div></td></tr>`; }).join('')}</tbody></table></div>`;
+  $('#view').querySelector('tbody').onclick = async e => {
+    const b = e.target.closest('[data-save]'); if (!b) return; const p = D.products.find(x => x.id == b.dataset.save), v = $(`[data-s="${p.id}"]`).value;
+    if (v === '' || +v < 0) return toast('সঠিক সংখ্যা দিন', true);
+    if (await act('saveProduct', {...p, stock: +v}, 'স্টক হালনাগাদ হয়েছে')) route();
+  };
+};
+
+/* ===== কুপন ===== */
+VIEWS.coupons = () => {
+  EXP.k = {title: 'কুপন তালিকা', head: ['কোড', 'ধরন', 'পরিমাণ', 'সর্বনিম্ন অর্ডার', 'সীমা', 'ব্যবহৃত', 'মেয়াদ', 'অবস্থা'], rows: D.coupons.map(c => [c.code, c.type === 'percent' ? 'শতকরা' : 'নির্দিষ্ট টাকা', c.value, c.min, c.limit || 'সীমাহীন', c.used, c.expiry || '-', c.active ? 'চালু' : 'বন্ধ'])};
+  $('#view').innerHTML = `<div class="bar"><span class="sp"></span>${exBtns('k')}<button class="btn" id="add">＋ নতুন কুপন</button></div><div class="tw"><table><thead><tr><th>কোড</th><th>ছাড়</th><th>সর্বনিম্ন অর্ডার</th><th>ব্যবহার</th><th>মেয়াদ</th><th>অবস্থা</th><th></th></tr></thead><tbody>${D.coupons.map(c => { const ex = c.expiry && new Date(c.expiry).getTime() + 864e5 < Date.now(); return `<tr><td><b>${esc(c.code)}</b></td><td>${c.type === 'percent' ? bn(c.value) + '%' : tk(c.value)}</td><td>${tk(c.min)}</td><td>${bn(c.used)}${c.limit ? ' / ' + bn(c.limit) : ''}</td><td>${c.expiry ? dstr(new Date(c.expiry).getTime()) : '-'}</td><td>${ex ? '<span class="pill p-out">মেয়াদোত্তীর্ণ</span>' : c.active ? '<span class="pill p-ok">চালু</span>' : '<span class="pill p-off">বন্ধ</span>'}</td><td><button class="btn sec sm" data-e="${esc(c.code)}">সম্পাদনা</button> <button class="btn sec sm" style="color:var(--red)" data-d="${esc(c.code)}">মুছুন</button></td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">কোনো কুপন নেই। নতুন কুপন যুক্ত করুন</td></tr>'}</tbody></table></div>`;
+  $('#add').onclick = () => editCoupon();
+  $('#view').querySelector('tbody').onclick = async e => {
+    const eb = e.target.closest('[data-e]'), db = e.target.closest('[data-d]');
+    if (eb) editCoupon(D.coupons.find(c => c.code === eb.dataset.e));
+    if (db && confirm('কুপনটি মুছে ফেলবেন?') && await act('deleteCoupon', {code: db.dataset.d}, 'মুছে ফেলা হয়েছে')) route();
+  };
+};
+function editCoupon(c) {
+  const n = !c; c = c || {type: 'percent', active: true};
+  openDrawer(n ? 'নতুন কুপন' : 'কুপন সম্পাদনা', `<label>কুপন কোড * (ইংরেজিতে, যেমন: GRAM10)</label><input id="f-c" value="${esc(c.code || '')}" ${n ? '' : 'readonly'} maxlength="20" style="text-transform:uppercase">
+  <div class="row2"><div><label>ছাড়ের ধরন</label><select id="f-t"><option value="percent" ${c.type === 'percent' ? 'selected' : ''}>শতকরা (%)</option><option value="fixed" ${c.type === 'fixed' ? 'selected' : ''}>নির্দিষ্ট টাকা</option></select></div><div><label>পরিমাণ *</label><input id="f-v" type="number" min="1" value="${c.value ?? ''}"></div></div>
+  <div class="row2"><div><label>সর্বনিম্ন অর্ডার (টাকা)</label><input id="f-m" type="number" min="0" value="${c.min || 0}"></div><div><label>ব্যবহারের সীমা (০ = সীমাহীন)</label><input id="f-l" type="number" min="0" value="${c.limit || 0}"></div></div>
+  <label>মেয়াদ শেষের তারিখ (ঐচ্ছিক)</label><input id="f-e" type="date" value="${esc(c.expiry || '')}">
+  <label class="chk"><input type="checkbox" id="f-a" ${c.active !== false ? 'checked' : ''}> কুপনটি চালু</label>`, `<button class="btn sec" id="cx">বাতিল</button><button class="btn" id="sv">সংরক্ষণ করুন</button>`);
+  $('#cx').onclick = closeDrawer;
+  $('#sv').onclick = async () => {
+    const d = {code: $('#f-c').value, type: $('#f-t').value, value: $('#f-v').value, min: $('#f-m').value, limit: $('#f-l').value, expiry: $('#f-e').value, active: $('#f-a').checked};
+    if (!d.code.trim()) return toast('কুপন কোড দিন', true); if (!(+d.value > 0)) return toast('ছাড়ের পরিমাণ দিন', true); if (d.type === 'percent' && +d.value > 100) return toast('শতকরা ১০০-এর বেশি হবে না', true);
+    if (await act('saveCoupon', d, 'কুপন সংরক্ষিত হয়েছে')) { closeDrawer(); route(); }
+  };
+}
+
+/* ===== বিক্রয় বিশ্লেষণ ===== */
+let range = 30;
+VIEWS.analytics = () => {
+  const list = inRange(range), L = list.filter(live), rev = L.reduce((a, o) => a + o.total, 0), disc = L.reduce((a, o) => a + o.discount, 0);
+  const can = list.length ? Math.round((list.length - L.length) / list.length * 100) : 0;
+  const tp = topProducts(list), pay = {}; L.forEach(o => { const k = o.pay; pay[k] = (pay[k] || 0) + o.total; });
+  const cat = {}; L.forEach(o => lines(o).forEach(l => { const p = D.products.find(x => x.name === l.name); const k = p ? catName(p.cat) : 'অন্যান্য'; cat[k] = (cat[k] || 0) + l.line; }));
+  const days = range || 30;
+  const rows = tp.map(t => [t.l, t.qty, t.v]);
+  EXP.a = {title: 'বিক্রয় রিপোর্ট', head: ['পণ্য', 'বিক্রিত সংখ্যা', 'বিক্রি (টাকা)'], rows: [...rows, ['--- মোট বিক্রি (ডেলিভারি সহ)', L.length + ' অর্ডার', rev]]};
+  $('#view').innerHTML = `<div class="bar"><select id="rg">${[[7, 'গত ৭ দিন'], [30, 'গত ৩০ দিন'], [90, 'গত ৯০ দিন'], [0, 'সব সময়']].map(r => `<option value="${r[0]}" ${r[0] === range ? 'selected' : ''}>${r[1]}</option>`).join('')}</select><span class="sp"></span>${exBtns('a')}</div>
+  <div class="grid g6"><div class="card stat"><div class="ic" style="background:#dcfce7">${ico('money', '#15803d')}</div><div><b>${tk(rev)}</b><span>মোট বিক্রি</span></div></div><div class="card stat"><div class="ic" style="background:#dbeafe">${ico('cart', '#2563eb')}</div><div><b>${bn(L.length)}</b><span>সফল অর্ডার</span></div></div><div class="card stat"><div class="ic" style="background:#ede9fe">${ico('chart', '#7c3aed')}</div><div><b>${tk(L.length ? rev / L.length : 0)}</b><span>গড় অর্ডার মূল্য</span></div></div><div class="card stat"><div class="ic" style="background:#fef3c7">${ico('coupon', '#d97706')}</div><div><b>${tk(disc)}</b><span>কুপন ছাড়</span></div></div><div class="card stat"><div class="ic" style="background:#fee2e2">${ico('alert', '#dc2626')}</div><div><b>${bn(can)}%</b><span>বাতিলের হার</span></div></div></div>
+  <div class="card" style="margin-top:16px"><h3>দৈনিক বিক্রির ধারা</h3>${lineChart(trend(Math.min(days, 90)), 240)}</div>
+  <div class="grid g2e" style="margin-top:16px"><div class="card"><h3>পণ্যভিত্তিক বিক্রি</h3>${hbars(tp.slice(0, 8).map(t => ({l: t.l, v: t.v})), tk)}</div><div class="card"><h3>ক্যাটাগরিভিত্তিক বিক্রি</h3>${hbars(Object.entries(cat).map(([l, v]) => ({l, v})).sort((a, b) => b.v - a.v), tk)}</div>
+  <div class="card"><h3>পেমেন্ট পদ্ধতি</h3>${hbars(Object.entries(pay).map(([l, v]) => ({l, v})).sort((a, b) => b.v - a.v), tk)}</div><div class="card"><h3>অর্ডারের অবস্থা</h3>${donut(statusParts())}</div></div>`;
+  $('#rg').onchange = e => { range = +e.target.value; route(); };
+};
+</script>
+</body>
+</html>
