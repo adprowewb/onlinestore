@@ -157,7 +157,7 @@ const tstr = t => { if (!t) return '-'; const d = new Date(t); return dstr(t) + 
 const dkey = t => { const d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
 const safeStore = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) {} } };
 
-let PW = '', D = {orders: [], products: [], cats: [], coupons: [], statuses: []};
+let PW = '', D = {orders: [], products: [], cats: [], coupons: [], ledger: [], partners: [], statuses: []};
 
 /* ===== সার্ভার যোগাযোগ ===== */
 async function api(action, data) {
@@ -206,11 +206,12 @@ const IC = {
   alert: '<path d="M12 3l10 18H2zM12 10v5M12 18h.01"/>',
   coupon: '<path d="M3 9a2 2 0 002-2V5h14v2a2 2 0 002 2v6a2 2 0 00-2 2v2H5v-2a2 2 0 00-2-2zM14 6v12" stroke-dasharray="2 2"/>',
   chart: '<path d="M3 3v18h18M7 15l4-5 3 3 5-7"/>',
+  book: '<path d="M4 4h12a3 3 0 013 3v13H7a3 3 0 01-3-3zM8 9h7M8 13h5"/>',
   money: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/>'
 };
 const ico = (k, c) => `<svg viewBox="0 0 24 24" fill="none" stroke="${c || 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
-const MENU = [['dashboard','ড্যাশবোর্ড','dash'],['products','পণ্য ব্যবস্থাপনা','box'],['categories','ক্যাটাগরি','tag'],['orders','অর্ডার ব্যবস্থাপনা','cart'],['customers','গ্রাহক ব্যবস্থাপনা','users'],['inventory','ইনভেন্টরি সতর্কতা','alert'],['coupons','কুপন ব্যবস্থাপনা','coupon'],['analytics','বিক্রয় বিশ্লেষণ','chart']];
+const MENU = [['dashboard','ড্যাশবোর্ড','dash'],['products','পণ্য ব্যবস্থাপনা','box'],['categories','ক্যাটাগরি','tag'],['orders','অর্ডার ব্যবস্থাপনা','cart'],['customers','গ্রাহক ব্যবস্থাপনা','users'],['inventory','ইনভেন্টরি সতর্কতা','alert'],['ledger','হিসাব খাতা','book'],['coupons','কুপন ব্যবস্থাপনা','coupon'],['analytics','বিক্রয় বিশ্লেষণ','chart']];
 
 /* ===== হিসাব ===== */
 const live = o => o.status !== 'বাতিল';
@@ -501,6 +502,106 @@ function editCoupon(c) {
     const d = {code: $('#f-c').value, type: $('#f-t').value, value: $('#f-v').value, min: $('#f-m').value, limit: $('#f-l').value, expiry: $('#f-e').value, active: $('#f-a').checked};
     if (!d.code.trim()) return toast('কুপন কোড দিন', true); if (!(+d.value > 0)) return toast('ছাড়ের পরিমাণ দিন', true); if (d.type === 'percent' && +d.value > 100) return toast('শতকরা ১০০-এর বেশি হবে না', true);
     if (await act('saveCoupon', d, 'কুপন সংরক্ষিত হয়েছে')) { closeDrawer(); route(); }
+  };
+}
+
+/* ===== হিসাব খাতা ===== */
+const LT = {purchase: 'ক্রয় (মাল কেনা)', supplier_pay: 'বিক্রেতাকে টাকা দেওয়া', credit_sale: 'বিক্রি (বাকি/নগদ)', collect: 'ক্রেতার কাছে আদায়', expense: 'খরচ'};
+const LCLS = {purchase: 'conf', supplier_pay: 'ship', credit_sale: 'done', collect: 'new', expense: 'can'};
+const OUTT = ['purchase', 'supplier_pay', 'expense'];
+const pname = id => (D.partners.find(p => p.id === id) || {}).name || '-';
+function acct() {
+  const sup = {}, cus = {}; let purchases = 0, expenses = 0, manual = 0, cin = 0, cout = 0;
+  D.ledger.forEach(e => {
+    if (e.type === 'purchase') { const x = sup[e.party] || (sup[e.party] = {name: e.party, total: 0, paid: 0}); x.total += e.total; x.paid += e.amount; purchases += e.total; cout += e.amount; }
+    else if (e.type === 'supplier_pay') { const x = sup[e.party] || (sup[e.party] = {name: e.party, total: 0, paid: 0}); x.paid += e.amount; cout += e.amount; }
+    else if (e.type === 'expense') { expenses += e.amount; cout += e.amount; }
+    else if (e.type === 'credit_sale') { const x = cus[e.party] || (cus[e.party] = {name: e.party, phone: e.phone, total: 0, paid: 0}); x.total += e.total; x.paid += e.amount; if (e.phone) x.phone = e.phone; manual += e.total; cin += e.amount; }
+    else if (e.type === 'collect') { if (e.party) { const x = cus[e.party] || (cus[e.party] = {name: e.party, phone: e.phone, total: 0, paid: 0}); x.paid += e.amount; } cin += e.amount; }
+  });
+  const web = D.orders.filter(live).reduce((a, o) => a + o.total, 0);
+  const dues = o => Object.values(o).map(x => ({...x, due: x.total - x.paid})).filter(x => Math.abs(x.due) > 0.009).sort((a, b) => b.due - a.due);
+  const pool = D.partners.reduce((a, p) => { D.ledger.filter(e => e.partner === p.id).forEach(e => a += OUTT.includes(e.type) ? e.amount : -e.amount); return a; }, 0);
+  const parts = D.partners.map(p => {
+    let out = 0, inn = 0; D.ledger.filter(e => e.partner === p.id).forEach(e => OUTT.includes(e.type) ? out += e.amount : inn += e.amount);
+    return {p, out, inn, pos: (out - inn) - p.share / 100 * pool};
+  });
+  return {sup: dues(sup), cus: dues(cus), purchases, expenses, manual, web, cin, cout, profit: web + manual - purchases - expenses, parts, pool};
+}
+let ltab = '', lq = '';
+VIEWS.ledger = () => {
+  const A = acct(), supDue = A.sup.reduce((a, x) => a + x.due, 0), cusDue = A.cus.reduce((a, x) => a + x.due, 0);
+  const sumShare = D.partners.reduce((a, p) => a + p.share, 0);
+  const cards = [['মোট ক্রয়', tk(A.purchases), 'box', '#d97706', '#fef3c7'], ['মোট বিক্রি', tk(A.web + A.manual), 'cart', '#15803d', '#dcfce7'], ['মোট খরচ', tk(A.expenses), 'money', '#dc2626', '#fee2e2'], ['আনুমানিক লাভ', tk(A.profit), 'chart', '#7c3aed', '#ede9fe'], ['বিক্রেতার বাকি (দেব)', tk(supDue), 'alert', '#dc2626', '#fee2e2'], ['ক্রেতার বাকি (পাব)', tk(cusDue), 'users', '#2563eb', '#dbeafe']];
+  const rows = () => D.ledger.filter(e => (!ltab || e.type === ltab) && (!lq || (e.party + e.item + e.note).includes(lq))).sort((a, b) => b.date.localeCompare(a.date));
+  $('#view').innerHTML = `<div class="grid g6">${cards.map(c => `<div class="card stat"><div class="ic" style="background:${c[4]}">${ico(c[2], c[3])}</div><div><b>${c[1]}</b><span>${c[0]}</span></div></div>`).join('')}</div>
+  <p style="color:var(--mu);font-size:13px;margin:8px 2px">আনুমানিক লাভ = ওয়েবসাইট ও হাতে বিক্রি − মোট ক্রয় − খরচ। যে মাল এখনও বিক্রি হয়নি তার দামও ক্রয়ে ধরা আছে, তাই মাল বিক্রি হতে হতে লাভ বাড়বে।</p>
+  <div class="grid g3" style="margin-top:8px">
+  <div class="card"><h3>বিক্রেতার বাকি (আমরা দেব)</h3><div class="mini">${A.sup.map(x => `<div class="mi"><div class="t"><b>${esc(x.name)}</b><small>কেনা ${tk(x.total)} · দেওয়া ${tk(x.paid)}</small></div><b style="color:var(--red)">${tk(x.due)}</b><button class="btn sec sm" data-pay="${esc(x.name)}">টাকা দিন</button></div>`).join('') || '<div class="empty">কোনো বাকি নেই ✓</div>'}</div></div>
+  <div class="card"><h3>ক্রেতার বাকি (আমরা পাব)</h3><div class="mini">${A.cus.map(x => `<div class="mi"><div class="t"><b>${esc(x.name)}</b><small>${x.phone ? bn(esc(x.phone)) + ' · ' : ''}নিয়েছে ${tk(x.total)} · দিয়েছে ${tk(x.paid)}</small></div><b style="color:#2563eb">${tk(x.due)}</b><button class="btn sec sm" data-col="${esc(x.name)}">আদায়</button></div>`).join('') || '<div class="empty">কোনো বাকি নেই ✓</div>'}</div></div>
+  <div class="card"><h3>পার্টনার হিসাব<button class="more" id="pm">পার্টনার বদলান ›</button></h3>${sumShare !== 100 ? `<div class="err" style="margin:0 0 8px">সতর্কতা: অংশের যোগফল ${bn(sumShare)}%, ১০০% হওয়া উচিত</div>` : ''}<div class="mini">${A.parts.map(x => `<div class="mi"><div class="t"><b>${esc(x.p.name)} (${bn(x.p.share)}%)</b><small>দিয়েছেন ${tk(x.out)} · পেয়েছেন ${tk(x.inn)}</small></div>${Math.abs(x.pos) < 1 ? '<span class="pill p-ok">মিলে গেছে</span>' : x.pos > 0 ? `<span class="pill p-done">পাবেন ${tk(x.pos)}</span>` : `<span class="pill p-low">দেবেন ${tk(-x.pos)}</span>`}</div>`).join('')}</div><p style="color:var(--mu);font-size:12.5px;margin:10px 0 0">নিজ নিজ অংশ অনুযায়ী মোট দেওয়া ও পাওয়া টাকার ভাগ করে হিসাব করা হয়েছে। "পাবেন" মানে অন্যরা তাকে এই টাকা ফেরত দেবেন।</p></div></div>
+  <div class="bar" style="margin-top:18px"><select id="lt"><option value="">সব ধরনের এন্ট্রি</option>${Object.entries(LT).map(([k, v]) => `<option value="${k}" ${k === ltab ? 'selected' : ''}>${v}</option>`).join('')}</select><input id="q" placeholder="নাম/পণ্য খুঁজুন" value="${esc(lq)}"><span class="sp"></span>${exBtns('l')}<button class="btn" id="add">＋ নতুন এন্ট্রি</button></div>
+  <div class="tw"><table><thead><tr><th>তারিখ</th><th>ধরন</th><th>পক্ষ / খাত</th><th>বিবরণ</th><th>মোট</th><th>নগদ টাকা</th><th>বাকি</th><th>পার্টনার</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+  <div class="grid g2e" style="margin-top:16px"><div class="card"><h3>বিক্রেতাভিত্তিক বাকি তালিকা</h3>${exBtns('ls')}</div><div class="card"><h3>ক্রেতাভিত্তিক বাকি তালিকা</h3>${exBtns('lc')}</div></div>`;
+  EXP.ls = {title: 'বিক্রেতার বাকি', head: ['বিক্রেতা', 'মোট কেনা', 'পরিশোধ', 'বাকি'], rows: A.sup.map(x => [x.name, x.total, x.paid, x.due])};
+  EXP.lc = {title: 'ক্রেতার বাকি', head: ['ক্রেতা', 'মোবাইল', 'মোট নিয়েছে', 'দিয়েছে', 'বাকি'], rows: A.cus.map(x => [x.name, x.phone, x.total, x.paid, x.due])};
+  const draw = () => {
+    const r = rows();
+    EXP.l = {title: 'হিসাব খাতা', head: ['তারিখ', 'ধরন', 'পক্ষ/খাত', 'বিবরণ', 'পরিমাণ', 'মোট', 'নগদ টাকা', 'বাকি', 'পার্টনার', 'নোট'], rows: r.map(e => [e.date, LT[e.type], e.party, e.item, e.qty ? e.qty + ' ' + e.unit : '', e.total, e.amount, e.type === 'purchase' || e.type === 'credit_sale' ? e.total - e.amount : 0, pname(e.partner), e.note])};
+    $('#tb').innerHTML = r.map(e => { const due = e.type === 'purchase' || e.type === 'credit_sale' ? e.total - e.amount : 0; return `<tr><td>${dstr(new Date(e.date + 'T12:00:00').getTime())}</td><td><span class="pill p-${LCLS[e.type]}">${LT[e.type]}</span></td><td><b>${esc(e.party || '-')}</b></td><td class="wr">${esc(e.item)}${e.qty ? ' · ' + bn(e.qty) + ' ' + esc(e.unit) : ''}${e.note ? `<br><small>${esc(e.note)}</small>` : ''}</td><td>${tk(e.total)}</td><td>${tk(e.amount)}</td><td>${due ? `<b style="color:var(--red)">${tk(due)}</b>` : '-'}</td><td>${e.amount ? esc(pname(e.partner)) : '-'}</td><td><button class="btn sec sm" data-e="${esc(e.id)}">সম্পাদনা</button> <button class="btn sec sm" style="color:var(--red)" data-d="${esc(e.id)}">মুছুন</button></td></tr>`; }).join('') || '<tr><td colspan="9" class="empty">এখনও কোনো এন্ট্রি নেই। "নতুন এন্ট্রি" চেপে শুরু করুন</td></tr>';
+  };
+  draw();
+  $('#lt').onchange = e => { ltab = e.target.value; draw(); }; $('#q').oninput = e => { lq = e.target.value; draw(); };
+  $('#add').onclick = () => editEntry(); $('#pm').onclick = partnersDrawer;
+  $('#view').onclick = async e => {
+    const pb = e.target.closest('[data-pay]'), cb = e.target.closest('[data-col]'), eb = e.target.closest('[data-e]'), db = e.target.closest('[data-d]');
+    if (pb) { const x = A.sup.find(v => v.name === pb.dataset.pay); editEntry({type: 'supplier_pay', party: x.name, amount: x.due}); }
+    if (cb) { const x = A.cus.find(v => v.name === cb.dataset.col); editEntry({type: 'collect', party: x.name, amount: x.due}); }
+    if (eb) editEntry(D.ledger.find(v => v.id === eb.dataset.e));
+    if (db && confirm('এই এন্ট্রি মুছে ফেলবেন?') && await act('deleteEntry', {id: db.dataset.d}, 'মুছে ফেলা হয়েছে')) route();
+  };
+};
+function editEntry(e) {
+  e = e || {type: 'purchase'}; const isNew = !e.id;
+  const cuNames = [...new Set(D.ledger.filter(x => x.type === 'credit_sale').map(x => x.party))], suNames = [...new Set(D.ledger.filter(x => x.type === 'purchase').map(x => x.party))];
+  const exCats = ['যাতায়াত', 'দোকান ভাড়া', 'প্যাকেজিং', 'মজুরি', 'বিজ্ঞাপন', 'মোবাইল/ইন্টারনেট', 'অন্যান্য'];
+  openDrawer(isNew ? 'নতুন এন্ট্রি' : 'এন্ট্রি সম্পাদনা', `
+  <label>কী ধরনের হিসাব?</label><select id="f-type">${Object.entries(LT).map(([k, v]) => `<option value="${k}" ${k === e.type ? 'selected' : ''}>${v}</option>`).join('')}</select>
+  <label>তারিখ</label><input id="f-date" type="date" value="${esc(e.date || dkey(Date.now()))}">
+  <div data-f="party"><label id="l-party">বিক্রেতার নাম</label><input id="f-party" list="dl-party" value="${esc(e.party || '')}" maxlength="60" autocomplete="off"><datalist id="dl-party"></datalist></div>
+  <div data-f="phone"><label>ক্রেতার মোবাইল (ঐচ্ছিক)</label><input id="f-phone" type="tel" value="${esc(e.phone || '')}"></div>
+  <div data-f="item"><label>পণ্য / বিবরণ</label><input id="f-item" value="${esc(e.item || '')}" maxlength="100" placeholder="যেমন: খেজুরের গুড়"></div>
+  <div data-f="qty" class="row2"><div><label>পরিমাণ</label><input id="f-qty" type="number" min="0" step="any" inputmode="decimal" value="${e.qty || ''}"></div><div><label>একক</label><select id="f-unit">${['কেজি', 'লিটার', 'পিস'].map(u => `<option ${u === (e.unit || 'কেজি') ? 'selected' : ''}>${u}</option>`).join('')}</select></div></div>
+  <div data-f="total"><label id="l-total">মোট দাম (টাকা)</label><input id="f-total" type="number" min="0" inputmode="numeric" value="${e.total || ''}"></div>
+  <div><label id="l-amt">এখন কত টাকা দিলেন?</label><input id="f-amt" type="number" min="0" inputmode="numeric" value="${e.amount ?? ''}"></div>
+  <div id="due" style="margin-top:8px;font-weight:700;color:var(--red)"></div>
+  <div><label id="l-partner">কোন পার্টনার টাকা দিলেন?</label><select id="f-partner">${D.partners.map(p => `<option value="${esc(p.id)}" ${p.id === e.partner ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></div>
+  <label>নোট (ঐচ্ছিক)</label><textarea id="f-note" rows="2" maxlength="200">${esc(e.note || '')}</textarea>`,
+  `<button class="btn sec" id="cx">বাতিল</button><button class="btn" id="sv">সংরক্ষণ করুন</button>`);
+  const show = () => {
+    const t = $('#f-type').value, vis = {purchase: ['party', 'item', 'qty', 'total'], supplier_pay: ['party'], credit_sale: ['party', 'phone', 'item', 'qty', 'total'], collect: ['party'], expense: ['party']}[t];
+    document.querySelectorAll('#drw [data-f]').forEach(x => x.classList.toggle('hide', !vis.includes(x.dataset.f)));
+    const L = {purchase: ['বিক্রেতার নাম', 'এখন কত টাকা দিলেন?', 'কোন পার্টনার টাকা দিলেন?', 'মোট দাম (টাকা)'], supplier_pay: ['বিক্রেতার নাম', 'কত টাকা দিলেন?', 'কোন পার্টনার টাকা দিলেন?'], credit_sale: ['ক্রেতার নাম', 'এখন কত টাকা পেলেন? (বাকি হলে ০)', 'কোন পার্টনার টাকা পেলেন?', 'মোট বিক্রির দাম (টাকা)'], collect: ['ক্রেতার নাম', 'কত টাকা আদায় হলো?', 'কোন পার্টনার টাকা পেলেন?'], expense: ['খরচের খাত', 'কত টাকা খরচ?', 'কোন পার্টনার খরচ করলেন?']}[t];
+    $('#l-party').textContent = L[0]; $('#l-amt').textContent = L[1]; $('#l-partner').textContent = L[2]; if (L[3]) $('#l-total').textContent = L[3];
+    $('#dl-party').innerHTML = (t === 'expense' ? exCats : t === 'collect' ? A_cus() : t === 'credit_sale' ? cuNames : suNames).map(n => `<option value="${esc(n)}">`).join('');
+    due();
+  };
+  const A_cus = () => acct().cus.map(x => x.name);
+  const due = () => { const t = $('#f-type').value, b = (+$('#f-total').value || 0) - (+$('#f-amt').value || 0); $('#due').textContent = (t === 'purchase' || t === 'credit_sale') && b > 0 ? 'বাকি থাকবে: ' + tk(b) : ''; };
+  $('#f-type').onchange = show; $('#f-total').oninput = due; $('#f-amt').oninput = due; show(); $('#cx').onclick = closeDrawer;
+  $('#sv').onclick = async () => {
+    const d = {id: e.id, type: $('#f-type').value, date: $('#f-date').value, party: $('#f-party').value, phone: $('#f-phone').value, item: $('#f-item').value, qty: $('#f-qty').value, unit: $('#f-unit').value, total: $('#f-total').value, amount: $('#f-amt').value, partner: $('#f-partner').value, note: $('#f-note').value};
+    if (!['purchase', 'credit_sale'].includes(d.type)) { d.phone = ''; d.item = ''; d.qty = 0; d.total = d.amount; }
+    if (await act('saveEntry', d, 'হিসাব সংরক্ষিত হয়েছে')) { closeDrawer(); route(); }
+  };
+}
+function partnersDrawer() {
+  const row = p => `<div class="card" style="margin-top:10px;padding:12px"><div class="row2"><div><label style="margin-top:0">নাম</label><input data-pn="${esc(p.id || '')}" value="${esc(p.name || '')}" maxlength="40"></div><div><label style="margin-top:0">অংশ (%)</label><input type="number" min="0" max="100" data-ps="${esc(p.id || '')}" value="${p.share ?? ''}"></div></div><div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm" data-psave="${esc(p.id || '')}">সংরক্ষণ</button>${p.id ? `<button class="btn sec sm" style="color:var(--red)" data-pdel="${esc(p.id)}">মুছুন</button>` : ''}</div></div>`;
+  openDrawer('পার্টনার ব্যবস্থাপনা', `<p style="color:var(--mu);font-size:14px">সবার অংশের যোগফল ১০০% হতে হবে। যেমন দুজনে সমান হলে ৫০ ও ৫০।</p>${D.partners.map(row).join('')}<h3 style="margin:18px 0 0;font-size:15px">নতুন পার্টনার</h3>${row({})}`);
+  $('#drw .bd').onclick = async e => {
+    const sv = e.target.closest('[data-psave]'), dl = e.target.closest('[data-pdel]');
+    if (sv) { const id = sv.dataset.psave, n = $(`[data-pn="${id}"]`).value, sh = $(`[data-ps="${id}"]`).value; if (await act('savePartner', {id: id || undefined, name: n, share: sh}, 'সংরক্ষিত হয়েছে')) { closeDrawer(); route(); setTimeout(partnersDrawer, 60); } }
+    if (dl && confirm('এই পার্টনারকে মুছে ফেলবেন?') && await act('deletePartner', {id: dl.dataset.pdel}, 'মুছে ফেলা হয়েছে')) { closeDrawer(); route(); }
   };
 }
 
